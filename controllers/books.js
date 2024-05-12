@@ -1,14 +1,14 @@
-const bookModel = require('../models/books');
+const { Book } = require('../models/book');
 const { HttpError, controllerWrapper } = require('../helpers');
 
 const getAll = async (req, res) => {
-  const result = await bookModel.listBooks();
+  const result = await Book.find({}, '-createdAt -updatedAt');
   res.json(result);
 };
 
 const getById = async (req, res) => {
-  const bookId = req.params.bookId;
-  const result = await bookModel.getBookById(bookId);
+  const bookId = req.params.id;
+  const result = await Book.findById(bookId);
   if (!result) {
     throw HttpError(404, 'Not found');
   }
@@ -17,13 +17,35 @@ const getById = async (req, res) => {
 };
 
 const add = async (req, res) => {
-  const result = await bookModel.addBook(req.body);
+  const result = await Book.create(req.body);
   res.status(201).json(result);
 };
 
+const updateById = async (req, res) => {
+  const bookId = req.params.id;
+  const result = await Book.findByIdAndUpdate(bookId, req.body, { new: true });
+
+  if (!result) {
+    throw HttpError(404, 'Not found');
+  }
+
+  res.json(result);
+};
+
+const updateFavoriteById = async (req, res) => {
+  const bookId = req.params.id;
+  const result = await Book.findByIdAndUpdate(bookId, req.body, { new: true });
+
+  if (!result) {
+    throw HttpError(404, 'Not found');
+  }
+
+  res.json(result);
+};
+
 const deleteById = async (req, res) => {
-  const bookId = req.params.bookId;
-  const result = await bookModel.removeBookById(bookId);
+  const bookId = req.params.id;
+  const result = await Book.findByIdAndDelete(bookId);
 
   if (!result) {
     throw HttpError(404, 'Not found');
@@ -34,21 +56,11 @@ const deleteById = async (req, res) => {
   });
 };
 
-const updateById = async (req, res) => {
-  const bookId = req.params.bookId;
-  const result = await bookModel.updateBook(bookId, req.body);
-
-  if (!result) {
-    throw HttpError(404, 'Not found');
-  }
-
-  res.json(result);
-};
-
 module.exports = {
   getAll: controllerWrapper(getAll),
   getById: controllerWrapper(getById),
   add: controllerWrapper(add),
-  deleteById: controllerWrapper(deleteById),
   updateById: controllerWrapper(updateById),
+  updateFavoriteById: controllerWrapper(updateFavoriteById),
+  deleteById: controllerWrapper(deleteById),
 };

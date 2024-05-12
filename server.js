@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 
 const { PORT = 3000, DB_HOST } = process.env;
 
+mongoose.set('strictQuery', true);
+
 mongoose
   .connect(DB_HOST)
   .then(() =>
