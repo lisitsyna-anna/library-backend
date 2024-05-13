@@ -28,6 +28,11 @@ const bookSchema = new Schema(
       type: String,
       match: dateRegexp,
     },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      required: true,
+    },
   },
   { versionKey: false, timestamps: true }
 );
